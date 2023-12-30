@@ -21,6 +21,7 @@ from datasets.blending import CutmixMixupBlending
 from utils.config import get_config
 from models import xclip
 
+
 def parse_option():
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', '-cfg', required=True, type=str, default='configs/k400/32_8.yaml')
