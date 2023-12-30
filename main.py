@@ -152,7 +152,7 @@ def train_one_epoch(epoch, model, criterion, optimizer, lr_scheduler, train_load
         t1_loss = criterion(logits_list[0], label_id)
         t2_loss = criterion(logits_list[1], label_id)
         t3_loss = criterion(logits_list[2], label_id)
-        total_loss = criterion(output, label_id) + t1_loss*0.2 + t2_loss*0.3 + t3_loss*0.5
+        total_loss = criterion(output, label_id) + t1_loss*0.1 + t2_loss*0.3 + t3_loss*0.5
         
         total_loss = total_loss / config.TRAIN.ACCUMULATION_STEPS
         temporal_loss = (t1_loss*0.2 + t2_loss*0.3 + t3_loss*0.5)/ config.TRAIN.ACCUMULATION_STEPS
