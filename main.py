@@ -146,17 +146,17 @@ def train_one_epoch(epoch, model, criterion, optimizer, lr_scheduler, train_load
         if texts.shape[0] == 1:
             texts = texts.view(1, -1)
         
-        output = model(images, texts)
+        output,logits_list = model(images, texts)
 
       
     
-        # t1_loss = criterion(logits_list[0], label_id)
-        # t2_loss = criterion(logits_list[1], label_id)
-        # t3_loss = criterion(logits_list[2], label_id)
-        # total_loss = criterion(output, label_id) + t1_loss*0.2 + t2_loss*0.3 + t3_loss*0.5
+        t1_loss = criterion(logits_list[0], label_id)
+        t2_loss = criterion(logits_list[1], label_id)
+        t3_loss = criterion(logits_list[2], label_id)
+        total_loss = criterion(output, label_id) + t1_loss*0.2 + t2_loss*0.3 + t3_loss*0.5
         total_loss = criterion(output, label_id) 
         total_loss = total_loss / config.TRAIN.ACCUMULATION_STEPS
-        # temporal_loss = (t1_loss*0.2 + t2_loss*0.3 + t3_loss*0.5)/ config.TRAIN.ACCUMULATION_STEPS
+        temporal_loss = (t1_loss*0.2 + t2_loss*0.3 + t3_loss*0.5)/ config.TRAIN.ACCUMULATION_STEPS
         if config.TRAIN.ACCUMULATION_STEPS == 1:
             optimizer.zero_grad()
         if config.TRAIN.OPT_LEVEL != 'O0':
@@ -176,7 +176,7 @@ def train_one_epoch(epoch, model, criterion, optimizer, lr_scheduler, train_load
         torch.cuda.synchronize()
         
         tot_loss_meter.update(total_loss.item(), len(label_id))
-        # temporal_loss_meter.update(temporal_loss.item(), len(label_id))
+        temporal_loss_meter.update(temporal_loss.item(), len(label_id))
         batch_time.update(time.time() - end)
         end = time.time()
 
@@ -189,7 +189,7 @@ def train_one_epoch(epoch, model, criterion, optimizer, lr_scheduler, train_load
                 f'eta {datetime.timedelta(seconds=int(etas))} lr {lr:.9f}\t'
                 f'time {batch_time.val:.4f} ({batch_time.avg:.4f})\t'
                 f'tot_loss {tot_loss_meter.val:.4f} ({tot_loss_meter.avg:.4f})\t'
-                # f'temporal_loss {temporal_loss_meter.val:.4f} ({temporal_loss_meter.avg:.4f})\t'
+                f'temporal_loss {temporal_loss_meter.val:.4f} ({temporal_loss_meter.avg:.4f})\t'
                 f'mem {memory_used:.0f}MB')
     epoch_time = time.time() - start
     logger.info(f"EPOCH {epoch} training takes {datetime.timedelta(seconds=int(epoch_time))}")
@@ -222,7 +222,7 @@ def validate(val_loader, text_labels, model, config):
                 if config.TRAIN.OPT_LEVEL == 'O2':
                     image_input = image_input.half()
                 
-                output = model(image_input, text_inputs)
+                output,logits_list = model(image_input, text_inputs)
                 
                 # output = output  + logits_list[0] + logits_list[1] + logits_list[2]
                 similarity = output.view(b, -1).softmax(dim=-1)

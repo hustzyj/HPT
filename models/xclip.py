@@ -163,7 +163,7 @@ class XCLIP(CLIP):
             tokens = tokens / tokens.norm(dim=-1, keepdim=True)
             logits_tokens = torch.einsum("bd,bkd->bk", tokens, logit_scale * text_features)
             logits_list.append(logits_tokens)
-        return logits
+        return logits, logits_list
 
 
 def build_model(state_dict: dict, T=8, droppath=0., use_checkpoint=False, logger=None,  use_cache=True, mit_layers=4, temporal_tokens = []):
