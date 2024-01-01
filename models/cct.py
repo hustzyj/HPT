@@ -379,5 +379,5 @@ class TokenTransformer(nn.Module):
        for i in range(len(split_tokens_list)):
            split_tokens_list[i] = split_tokens_list[i] @ self.temporal_tokens_proj[i]
 
-       return cls_x, x[:, 1:, :], split_tokens_list
+       return cls_x, x, split_tokens_list
 
