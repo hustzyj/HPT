@@ -305,7 +305,7 @@ def build_dataloader(logger, config):
     val_loader = DataLoader(
         val_data, sampler=sampler_val,
         batch_size=2,
-        num_workers=4,
+        num_workers=8,
         pin_memory=True,
         drop_last=True,
         collate_fn=partial(mmcv_collate, samples_per_gpu=2),
