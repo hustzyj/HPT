@@ -148,10 +148,10 @@ class XCLIP(CLIP):
 
 
         video_features, image_features, split_tokens_list= self.encode_video(image, text_features)
-
         image_features = image_features.mean(dim=1, keepdim=False)
+        temporal_fea = torch.cat(split_tokens_list,dim=1)
         #text_features = text_features + self.prompts_generator(text_features, image_features)
-        
+        text_features = text_features + self.prompts_generator(text_features, temporal_fea)
 
         video_features = video_features / video_features.norm(dim=-1, keepdim=True)
         text_features = text_features / text_features.norm(dim=-1, keepdim=True)
