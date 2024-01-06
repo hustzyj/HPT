@@ -79,6 +79,7 @@ def main(config):
     model = torch.nn.parallel.DistributedDataParallel(model, device_ids=[config.LOCAL_RANK], broadcast_buffers=False, find_unused_parameters=True)
 
     start_epoch, max_accuracy = 0, 0.0
+    is_best = False
 
     if config.TRAIN.AUTO_RESUME:
         resume_file = auto_resume_helper(config.OUTPUT)
@@ -104,13 +105,13 @@ def main(config):
     for epoch in range(start_epoch, config.TRAIN.EPOCHS):
         train_loader.sampler.set_epoch(epoch)
         train_one_epoch(epoch, model, criterion, optimizer, lr_scheduler, train_loader, text_labels, config, mixup_fn)
-        
-        acc1 = validate(val_loader, text_labels, model, config)
-        logger.info(f"Accuracy of the network on the {len(val_data)} test videos: {acc1:.1f}%")
-        is_best = acc1 > max_accuracy
-        max_accuracy = max(max_accuracy, acc1)
-        logger.info(f'Max accuracy: {max_accuracy:.2f}%')
-        if dist.get_rank() == 0 and epoch >20 and (epoch % config.SAVE_FREQ == 0 or epoch == (config.TRAIN.EPOCHS - 1)):
+        if epoch>24:
+            acc1 = validate(val_loader, text_labels, model, config)
+            logger.info(f"Accuracy of the network on the {len(val_data)} test videos: {acc1:.1f}%")
+            is_best = acc1 > max_accuracy
+            max_accuracy = max(max_accuracy, acc1)
+            logger.info(f'Max accuracy: {max_accuracy:.2f}%')
+        if dist.get_rank() == 0 and epoch >23 and (epoch % config.SAVE_FREQ == 0 or epoch == (config.TRAIN.EPOCHS - 1)):
             epoch_saving(config, epoch, model.module, max_accuracy, optimizer, lr_scheduler, logger, config.OUTPUT, is_best)
 
     config.defrost()
