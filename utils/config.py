@@ -29,8 +29,8 @@ _C.MODEL.DROP_PATH_RATE = 0.
 _C.MODEL.PRETRAINED = None
 _C.MODEL.RESUME = None
 _C.MODEL.FIX_TEXT = True
-# _C.MODEL.temporal_tokens = [512, 256, 64, 16]
-_C.MODEL.TEMPORAL_TOKENS = [256, 128, 32, 8]
+_C.MODEL.temporal_tokens = [512, 256, 128]
+#_C.MODEL.TEMPORAL_TOKENS = [256, 128, 32, 8]
 
 # -----------------------------------------------------------------------------
 # Training settings
