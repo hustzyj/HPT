@@ -29,7 +29,7 @@ _C.MODEL.DROP_PATH_RATE = 0.
 _C.MODEL.PRETRAINED = None
 _C.MODEL.RESUME = None
 _C.MODEL.FIX_TEXT = True
-_C.MODEL.TEMPORAL_TOKENS = [512, 256, 128]
+_C.MODEL.TEMPORAL_TOKENS = [256, 128, 64]
 #_C.MODEL.TEMPORAL_TOKENS = [256, 128, 32, 8]
 
 # -----------------------------------------------------------------------------
