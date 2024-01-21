@@ -151,8 +151,8 @@ class XCLIP(CLIP):
         image_features = image_features.mean(dim=1, keepdim=False)
         temporal_fea = torch.cat(split_tokens_list,dim=1)
         image_temporal_fea = torch.cat((image_features, temporal_fea), dim = 1)
-        text_features = text_features + self.prompts_generator(text_features, image_temporal_fea)
-        # text_features = text_features + self.prompts_generator(text_features, image_features)
+        # text_features = text_features + self.prompts_generator(text_features, image_temporal_fea)
+        text_features = text_features + self.prompts_generator(text_features, image_features)
 
         # text_features = text_features + self.prompts_generator(text_features, temporal_fea)
 
