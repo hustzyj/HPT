@@ -246,8 +246,8 @@ def build_dataloader(logger, config):
 
     train_pipeline = [
         dict(type='DecordInit'),
-        # dict(type='SampleFrames', clip_len=1, frame_interval=1, num_clips=config.DATA.NUM_FRAMES),
-        dict(type='SampleFrames', clip_len=config.DATA.NUM_FRAMES, frame_interval=2, num_clips=1, frame_uniform=True),
+        dict(type='SampleFrames', clip_len=1, frame_interval=1, num_clips=config.DATA.NUM_FRAMES),
+        # dict(type='SampleFrames', clip_len=config.DATA.NUM_FRAMES, frame_interval=2, num_clips=1, frame_uniform=True),
         dict(type='DecordDecode'),
         dict(type='Resize', scale=(-1, scale_resize)),
         dict(

@@ -54,15 +54,15 @@ def build_optimizer(config, model):
         skip = model.no_weight_decay()
     if hasattr(model, 'no_weight_decay_keywords'):
         skip_keywords = model.no_weight_decay_keywords()
-    clip_parameters = set_weight_decay(model, skip, skip_keywords, 
-        weight_decay=config.TRAIN.WEIGHT_DECAY, lr=config.TRAIN.LR, 
-        have=(), not_have=("token_inter", "mit", "message_", "temporal_tokens", "prompts",  "alpha1")
-    )
+    # clip_parameters = set_weight_decay(model, skip, skip_keywords, 
+    #     weight_decay=config.TRAIN.WEIGHT_DECAY, lr=config.TRAIN.LR, 
+    #     have=(), not_have=("token_inter", "mit", "message_", "temporal_tokens", "prompts",  "alpha1")
+    # )
    
-    msg_parameters = set_weight_decay(model, skip, skip_keywords,
-        weight_decay=config.TRAIN.WEIGHT_DECAY, lr=config.TRAIN.LR*10, 
-        have=("prompts",), not_have=()
-    )
+    # msg_parameters = set_weight_decay(model, skip, skip_keywords,
+    #     weight_decay=config.TRAIN.WEIGHT_DECAY, lr=config.TRAIN.LR*10, 
+    #     have=("prompts",), not_have=()
+    # )
 
 
     learning_rate_mit = 4e-4
@@ -77,10 +77,10 @@ def build_optimizer(config, model):
         have=("token_inter", "temporal_tokens", "message_", "alpha1"), not_have=()
     )
 
-    optimizer = optim.AdamW(clip_parameters + mit_parameters + prompts_parameters + msg_parameters,
-                        betas=(0.9, 0.98), eps=1e-8,)
-    # optimizer = optim.AdamW(mit_parameters + prompts_parameters,
+    # optimizer = optim.AdamW(clip_parameters + mit_parameters + prompts_parameters + msg_parameters,
     #                     betas=(0.9, 0.98), eps=1e-8,)
+    optimizer = optim.AdamW(mit_parameters + prompts_parameters,
+                        betas=(0.9, 0.98), eps=1e-8,)
     return optimizer
 
 
