@@ -305,11 +305,11 @@ def build_dataloader(logger, config):
     sampler_val = SubsetRandomSampler(indices)
     val_loader = DataLoader(
         val_data, sampler=sampler_val,
-        batch_size=8,
+        batch_size=4,
         num_workers=8,
         pin_memory=True,
         drop_last=True,
-        collate_fn=partial(mmcv_collate, samples_per_gpu=8),
+        collate_fn=partial(mmcv_collate, samples_per_gpu=4),
     )
 
     return train_data, val_data, train_loader, val_loader
