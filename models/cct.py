@@ -266,14 +266,14 @@ class Transformer(nn.Module):
                 ("gelu", QuickGELU()),
                 # ("norm", nn.LayerNorm(self.temporal_tokens[i+1])),
                 ("c_proj", nn.Linear(self.temporal_tokens[i+1] , self.temporal_tokens[i+1]))])))
-            self.temporal_tokens_weight.append(nn.Parameter(torch.ones(width) * 1e-4))
+            self.temporal_tokens_weight.append(nn.Parameter(torch.ones(width) * 0.5))
         
-        self.temporal_tokens_MLP_1_3 = nn.Sequential(OrderedDict([
-                ("c_fc", nn.Linear(self.temporal_tokens[0], self.temporal_tokens[2])),
-                ("gelu", QuickGELU()),
-                # ("norm", nn.LayerNorm(self.temporal_tokens[2])),
-                ("c_proj", nn.Linear(self.temporal_tokens[2] , self.temporal_tokens[2]))]))
-        self.temporal_tokens_weight_1_3 = nn.Parameter(torch.ones(width) * 1e-4)
+        # self.temporal_tokens_MLP_1_3 = nn.Sequential(OrderedDict([
+        #         ("c_fc", nn.Linear(self.temporal_tokens[0], self.temporal_tokens[2])),
+        #         ("gelu", QuickGELU()),
+        #         # ("norm", nn.LayerNorm(self.temporal_tokens[2])),
+        #         ("c_proj", nn.Linear(self.temporal_tokens[2] , self.temporal_tokens[2]))]))
+        # self.temporal_tokens_weight_1_3 = nn.Parameter(torch.ones(width) * 1e-4)
 
 
         self.resblocks = nn.Sequential(*[CrossFramelAttentionBlock(width, heads, attn_mask, droppath[i], T, ) for i in range(layers)])
@@ -314,7 +314,10 @@ class Transformer(nn.Module):
             #     pre_tokens =    new_temporal_tokens_2_ + self.temporal_tokens_parameter[i//self.split]
             # x, split_tokens = self.resblocks[i](x, pre_tokens)####
             if i%(self.split) == 0:
-                x, split_tokens = self.resblocks[i](x, self.temporal_tokens_parameter[i//self.split])
+                pre_tokens = self.temporal_tokens_parameter[i//self.split]
+                if i!=0:
+                    pre_tokens = pre_tokens + ((self.temporal_tokens_MLP[(i//self.split) -1](split_tokens.transpose(1, 2)).transpose(1, 2))*self.temporal_tokens_weight[(i//self.split) -1]).mean(dim=0, keepdim=True)
+                x, split_tokens = self.resblocks[i](x, pre_tokens)
             else:
                 x, split_tokens = self.resblocks[i](x, split_tokens)
                 if (i+1)%(self.split) == 0:
