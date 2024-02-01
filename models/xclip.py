@@ -44,7 +44,7 @@ class XCLIP(CLIP):
             context_length, vocab_size, transformer_width, transformer_heads, transformer_layers
         )
         
-        self.prompts_generator = VideoSpecificPrompt(layers=1, embed_dim=embed_dim, alpha=1e-4,)
+        self.prompts_generator = VideoSpecificPrompt(layers=2, embed_dim=embed_dim, alpha=1e-4,)
         self.use_cache=use_cache
         self.mit = MultiframeIntegrationTransformer(T=T, embed_dim=embed_dim, layers=mit_layers,)
 
