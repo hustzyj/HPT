@@ -314,10 +314,7 @@ class Transformer(nn.Module):
             #     pre_tokens =    new_temporal_tokens_2_ + self.temporal_tokens_parameter[i//self.split]
             # x, split_tokens = self.resblocks[i](x, pre_tokens)####
             if i%(self.split) == 0:
-                pre_tokens = self.temporal_tokens_parameter[i//self.split]
-                if i!=0:
-                    pre_tokens = pre_tokens + ((self.temporal_tokens_MLP[(i//self.split) -1](split_tokens.transpose(1, 2)).transpose(1, 2))*self.temporal_tokens_weight[(i//self.split) -1]).mean(dim=0, keepdim=True)
-                x, split_tokens = self.resblocks[i](x, pre_tokens)
+                x, split_tokens = self.resblocks[i](x, self.temporal_tokens_parameter[i//self.split])
             else:
                 x, split_tokens = self.resblocks[i](x, split_tokens)
                 if (i+1)%(self.split) == 0:

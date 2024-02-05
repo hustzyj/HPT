@@ -44,7 +44,7 @@ class XCLIP(CLIP):
             context_length, vocab_size, transformer_width, transformer_heads, transformer_layers
         )
         
-        self.prompts_generator = VideoSpecificPrompt(layers=2, embed_dim=embed_dim, alpha=1e-4,)
+        self.prompts_generator = VideoSpecificPrompt(layers=1, embed_dim=embed_dim, alpha=1e-4,)
         self.use_cache=use_cache
         self.mit = MultiframeIntegrationTransformer(T=T, embed_dim=embed_dim, layers=mit_layers,)
 
@@ -151,8 +151,8 @@ class XCLIP(CLIP):
         image_features = image_features.mean(dim=1, keepdim=False)
         temporal_fea = torch.cat(split_tokens_list,dim=1)
         image_temporal_fea = torch.cat((image_features, temporal_fea), dim = 1)
-        text_features = text_features + self.prompts_generator(text_features, image_temporal_fea)
-        # text_features = text_features + self.prompts_generator(text_features, image_features)
+        # text_features = text_features + self.prompts_generator(text_features, image_temporal_fea)
+        text_features = text_features + self.prompts_generator(text_features, image_features)
 
         # text_features = text_features + self.prompts_generator(text_features, temporal_fea)
 
