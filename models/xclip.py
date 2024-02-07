@@ -118,12 +118,12 @@ class XCLIP(CLIP):
         temporal_features = temporal_features.view(b, t, -1)
         image_features = image_features.view(b,t,-1,temporal_features.shape[-1])
         
-        attn_weight = temporal_features @ text_features.transpose(-1, -2)
-        values_1, _ = attn_weight.topk(5, dim=-1)
-        values_1 = values_1.mean(dim=-1, keepdim = False).softmax(dim = -1)
-        prompts_temporal_features = torch.einsum("btd, bt->btd", temporal_features, values_1)
-        prompts_temporal_features = self.prompts_text_video(prompts_temporal_features) @ self.prompts_text_video_proj
-        temporal_features = temporal_features + self.prompts_weight*prompts_temporal_features
+        # attn_weight = temporal_features @ text_features.transpose(-1, -2)
+        # values_1, _ = attn_weight.topk(5, dim=-1)
+        # values_1 = values_1.mean(dim=-1, keepdim = False).softmax(dim = -1)
+        # prompts_temporal_features = torch.einsum("btd, bt->btd", temporal_features, values_1)
+        # prompts_temporal_features = self.prompts_text_video(prompts_temporal_features) @ self.prompts_text_video_proj
+        # temporal_features = temporal_features + self.prompts_weight*prompts_temporal_features
 
         video_features = self.mit(temporal_features)
   
