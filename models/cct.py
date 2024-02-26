@@ -266,14 +266,14 @@ class Transformer(nn.Module):
                 ("gelu", QuickGELU()),
                 # ("norm", nn.LayerNorm(self.temporal_tokens[i+1])),
                 ("c_proj", nn.Linear(self.temporal_tokens[i+1] , self.temporal_tokens[i+1]))])))
-            self.temporal_tokens_weight.append(nn.Parameter(torch.ones(width) * 1e-4))
+            self.temporal_tokens_weight.append(nn.Parameter(torch.ones(width) * 0.5))
         
-        self.temporal_tokens_MLP_1_3 = nn.Sequential(OrderedDict([
-                ("c_fc", nn.Linear(self.temporal_tokens[0], self.temporal_tokens[2])),
-                ("gelu", QuickGELU()),
-                # ("norm", nn.LayerNorm(self.temporal_tokens[2])),
-                ("c_proj", nn.Linear(self.temporal_tokens[2] , self.temporal_tokens[2]))]))
-        self.temporal_tokens_weight_1_3 = nn.Parameter(torch.ones(width) * 1e-4)
+        # self.temporal_tokens_MLP_1_3 = nn.Sequential(OrderedDict([
+        #         ("c_fc", nn.Linear(self.temporal_tokens[0], self.temporal_tokens[2])),
+        #         ("gelu", QuickGELU()),
+        #         # ("norm", nn.LayerNorm(self.temporal_tokens[2])),
+        #         ("c_proj", nn.Linear(self.temporal_tokens[2] , self.temporal_tokens[2]))]))
+        # self.temporal_tokens_weight_1_3 = nn.Parameter(torch.ones(width) * 1e-4)
 
 
         self.resblocks = nn.Sequential(*[CrossFramelAttentionBlock(width, heads, attn_mask, droppath[i], T, ) for i in range(layers)])
@@ -380,3 +380,4 @@ class TokenTransformer(nn.Module):
            split_tokens_list[i] = split_tokens_list[i] @ self.temporal_tokens_proj[i]
 
        return cls_x, x, split_tokens_list
+

@@ -118,12 +118,12 @@ class XCLIP(CLIP):
         temporal_features = temporal_features.view(b, t, -1)
         image_features = image_features.view(b,t,-1,temporal_features.shape[-1])
         
-        # attn_weight = temporal_features @ text_features.transpose(-1, -2)
-        # values_1, _ = attn_weight.topk(5, dim=-1)
-        # values_1 = values_1.mean(dim=-1, keepdim = False).softmax(dim = -1)
-        # prompts_temporal_features = torch.einsum("btd, bt->btd", temporal_features, values_1)
-        # prompts_temporal_features = self.prompts_text_video(prompts_temporal_features) @ self.prompts_text_video_proj
-        # temporal_features = temporal_features + self.prompts_weight*prompts_temporal_features
+        attn_weight = temporal_features @ text_features.transpose(-1, -2)
+        values_1, _ = attn_weight.topk(5, dim=-1)
+        values_1 = values_1.mean(dim=-1, keepdim = False).softmax(dim = -1)
+        prompts_temporal_features = torch.einsum("btd, bt->btd", temporal_features, values_1)
+        prompts_temporal_features = self.prompts_text_video(prompts_temporal_features) @ self.prompts_text_video_proj
+        temporal_features = temporal_features + self.prompts_weight*prompts_temporal_features
 
         video_features = self.mit(temporal_features)
   
@@ -150,7 +150,10 @@ class XCLIP(CLIP):
         video_features, image_features, split_tokens_list= self.encode_video(image, text_features)
         image_features = image_features.mean(dim=1, keepdim=False)
         temporal_fea = torch.cat(split_tokens_list,dim=1)
+        image_temporal_fea = torch.cat((image_features, temporal_fea), dim = 1)
+        # text_features = text_features + self.prompts_generator(text_features, image_temporal_fea)
         text_features = text_features + self.prompts_generator(text_features, image_features)
+
         # text_features = text_features + self.prompts_generator(text_features, temporal_fea)
 
         video_features = video_features / video_features.norm(dim=-1, keepdim=True)
