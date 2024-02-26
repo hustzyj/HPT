@@ -247,7 +247,6 @@ def build_dataloader(logger, config):
     train_pipeline = [
         dict(type='DecordInit'),
         dict(type='SampleFrames', clip_len=1, frame_interval=1, num_clips=config.DATA.NUM_FRAMES),
-        # dict(type='SampleFrames', clip_len=config.DATA.NUM_FRAMES, frame_interval=2, num_clips=1, frame_uniform=True),
         dict(type='DecordDecode'),
         dict(type='Resize', scale=(-1, scale_resize)),
         dict(
@@ -277,7 +276,7 @@ def build_dataloader(logger, config):
     train_loader = DataLoader(
         train_data, sampler=sampler_train,
         batch_size=config.TRAIN.BATCH_SIZE,
-        num_workers=8,
+        num_workers=16,
         pin_memory=True,
         drop_last=True,
         collate_fn=partial(mmcv_collate, samples_per_gpu=config.TRAIN.BATCH_SIZE),
@@ -305,11 +304,11 @@ def build_dataloader(logger, config):
     sampler_val = SubsetRandomSampler(indices)
     val_loader = DataLoader(
         val_data, sampler=sampler_val,
-        batch_size=1,
-        num_workers=2,
+        batch_size=2,
+        num_workers=8,
         pin_memory=True,
         drop_last=True,
-        collate_fn=partial(mmcv_collate, samples_per_gpu=1),
+        collate_fn=partial(mmcv_collate, samples_per_gpu=2),
     )
 
     return train_data, val_data, train_loader, val_loader
