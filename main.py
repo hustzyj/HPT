@@ -105,7 +105,7 @@ def main(config):
     for epoch in range(start_epoch, config.TRAIN.EPOCHS):
         train_loader.sampler.set_epoch(epoch)
         train_one_epoch(epoch, model, criterion, optimizer, lr_scheduler, train_loader, text_labels, config, mixup_fn)
-        if epoch>27:
+        if epoch>24:
             acc1 = validate(val_loader, text_labels, model, config)
             logger.info(f"Accuracy of the network on the {len(val_data)} test videos: {acc1:.1f}%")
             is_best = acc1 > max_accuracy
